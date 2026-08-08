@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -8,15 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://oonjohhbuhspcpwpsmdt.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vbmpvaGhidWhzcGNwd3BzbWR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDkxMzgsImV4cCI6MjEwMDgyNTEzOH0.GSzP-k6U4xHlN1yGctXu7V-fcd6zD0eTMmjF5MEProc";
-
-  window.supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
-</script>
+<script src="./supabase-config.js"></script>
 <style>
   :root{
     --ink:#14181A;
@@ -41,6 +33,7 @@
     line-height:1.5;
   }
 
+  /* ===== LANDING PAGE ===== */
   #landingPage{
     display:flex;
     align-items:center;
@@ -174,6 +167,7 @@
     }
   }
 
+  /* ===== FORM PAGE ===== */
   #formSection{
     position:relative;
     padding:60px 24px;
@@ -251,6 +245,7 @@
     margin:0 0 8px;
   }
 
+  /* progress */
   .progress-top{
     display:flex;
     align-items:center;
@@ -329,6 +324,7 @@
     font-weight:500;
   }
 
+  /* steps */
   .step-panel{
     display:none;
     animation:fadeIn .3s ease;
@@ -433,6 +429,7 @@
     .row{ grid-template-columns:1fr; }
   }
 
+  /* svc cards */
   .svc-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -499,6 +496,7 @@
     opacity:1;
   }
 
+  /* links */
   .links-section{
     margin-bottom:28px;
   }
@@ -515,6 +513,7 @@
     margin-bottom:6px;
   }
 
+  /* confirm */
   .confirm-row{
     display:flex;
     align-items:flex-start;
@@ -540,6 +539,7 @@
     line-height:1.5;
   }
 
+  /* buttons */
   .button-group{
     display:flex;
     align-items:center;
@@ -604,6 +604,7 @@
     cursor:not-allowed;
   }
 
+  /* spinner */
   .spinner{
     display:inline-block;
     width:16px;
@@ -618,10 +619,12 @@
     to{ transform:rotate(360deg); }
   }
 
+  /* success */
   #successPanel{
     display:none;
     min-height:100vh;
     padding:60px 24px;
+    display:flex;
     align-items:center;
     justify-content:center;
   }
@@ -659,37 +662,11 @@
   .success-card p{
     font-size:15px;
     color:var(--ink-soft);
-    margin:0 0 32px;
+    margin:0;
     line-height:1.6;
   }
 
-  .success-button{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:12px 28px;
-    border-radius:12px;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    transition:all .2s;
-    font-family:inherit;
-    box-shadow:0 4px 12px rgba(0,145,125,0.2);
-  }
-
-  .success-button:hover{
-    background:var(--primary-dark);
-    transform:translateY(-1px);
-    box-shadow:0 6px 16px rgba(0,145,125,0.3);
-  }
-
-  .success-button:active{
-    transform:scale(0.98);
-  }
-
+  /* error */
   .submit-error{
     display:none;
     padding:14px 16px;
@@ -750,19 +727,19 @@
         
         <div class="form-section">
           <label for="name">Full Name *</label>
-          <input type="text" id="name" name="name" placeholder="John Doe">
+          <input type="text" id="name" placeholder="John Doe">
           <div class="error-message" id="err-name"></div>
         </div>
 
         <div class="row">
           <div class="form-section">
             <label for="age">Age *</label>
-            <input type="number" id="age" name="age" placeholder="21" min="16" max="50">
+            <input type="number" id="age" placeholder="21" min="16" max="50">
             <div class="error-message" id="err-age"></div>
           </div>
           <div class="form-section">
             <label for="institution">School / College *</label>
-            <input type="text" id="institution" name="institution" placeholder="SRMIST, IIT Madras, etc.">
+            <input type="text" id="institution" placeholder="SRMIST, IIT Madras, etc.">
             <div class="error-message" id="err-institution"></div>
           </div>
         </div>
@@ -770,12 +747,12 @@
         <div class="row">
           <div class="form-section">
             <label for="gradeYear">Grade / Year *</label>
-            <input type="text" id="gradeYear" name="gradeYear" placeholder="2nd Year, 12th Grade">
+            <input type="text" id="gradeYear" placeholder="2nd Year, 12th Grade">
             <div class="error-message" id="err-gradeYear"></div>
           </div>
           <div class="form-section">
             <label for="course">Course / Stream *</label>
-            <input type="text" id="course" name="course" placeholder="B.Tech CSE, B.Sc Physics">
+            <input type="text" id="course" placeholder="B.Tech CSE, B.Sc Physics">
             <div class="error-message" id="err-course"></div>
           </div>
         </div>
@@ -787,7 +764,7 @@
         
         <div class="form-section">
           <label for="about">What drives you as a builder? *</label>
-          <textarea id="about" name="about" placeholder="Share your passion, background, and what motivates you to build..."></textarea>
+          <textarea id="about" placeholder="Share your passion, background, and what motivates you to build..."></textarea>
           <div class="error-message" id="err-about"></div>
           <div class="hint">Write 50-200 words</div>
         </div>
@@ -799,26 +776,33 @@
         
         <div class="form-section">
           <label for="startupName">Startup Name *</label>
-          <input type="text" id="startupName" name="startupName" placeholder="Your startup name">
+          <input type="text" id="startupName" placeholder="Your startup name">
           <div class="error-message" id="err-startupName"></div>
         </div>
 
-        <div class="form-section">
-          <label for="startupStage">Current Stage *</label>
-          <select id="startupStage" name="startupStage">
-            <option value="">Select a stage</option>
-            <option value="Idea">Idea Stage</option>
-            <option value="Prototype">Prototype</option>
-            <option value="MVP">MVP</option>
-            <option value="Early Users">Launched — Early Users, No Revenue</option>
-            <option value="Revenue">Generating Revenue</option>
-          </select>
-          <div class="error-message" id="err-startupStage"></div>
+        <div class="row">
+          <div class="form-section">
+            <label for="startupStage">Current Stage *</label>
+            <select id="startupStage">
+              <option value="">Select a stage</option>
+              <option value="Idea">Idea Stage</option>
+              <option value="Prototype">Prototype</option>
+              <option value="MVP">MVP</option>
+              <option value="Early Users">Early Users (Launched)</option>
+              <option value="Revenue">Revenue</option>
+            </select>
+            <div class="error-message" id="err-startupStage"></div>
+          </div>
+          <div class="form-section">
+            <label for="yearFounded">Year Founded (if applicable)</label>
+            <input type="number" id="yearFounded" placeholder="2024" min="2015" max="2025">
+            <div class="error-message" id="err-yearFounded"></div>
+          </div>
         </div>
 
         <div class="form-section">
           <label for="idea">What problem are you solving? *</label>
-          <textarea id="idea" name="idea" placeholder="Describe your startup idea, the problem you're solving, and your vision..."></textarea>
+          <textarea id="idea" placeholder="Describe your startup idea, the problem you're solving, and your vision..."></textarea>
           <div class="error-message" id="err-idea"></div>
           <div class="hint">Write 50-200 words</div>
         </div>
@@ -835,42 +819,42 @@
       <!-- STEP 4: Links & Portfolio -->
       <div class="step-panel">
         <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Share your work</h2>
-        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Links to your website, profiles, and demo — all optional, add whatever you have</p>
+        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Links to your website, profiles, and demo (required fields marked with *)</p>
         
         <div class="links-section">
           <div class="link-field">
-            <label for="website">Website / Portfolio</label>
-            <input type="text" id="website" name="website" placeholder="https://yourwebsite.com">
+            <label for="website">Website / Portfolio *</label>
+            <input type="text" id="website" placeholder="https://yourwebsite.com">
             <div class="error-message" id="err-website"></div>
           </div>
 
           <div class="link-field">
-            <label for="linkedin">LinkedIn Profile</label>
-            <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+            <label for="linkedin">LinkedIn Profile *</label>
+            <input type="text" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
             <div class="error-message" id="err-linkedin"></div>
           </div>
 
           <div class="link-field">
             <label for="appLink">App / Product Link</label>
-            <input type="text" id="appLink" name="appLink" placeholder="https://app.example.com">
+            <input type="text" id="appLink" placeholder="https://app.example.com">
             <div class="error-message" id="err-appLink"></div>
           </div>
 
           <div class="link-field">
             <label for="github">GitHub Profile</label>
-            <input type="text" id="github" name="github" placeholder="https://github.com/yourprofile">
+            <input type="text" id="github" placeholder="https://github.com/yourprofile">
             <div class="error-message" id="err-github"></div>
           </div>
 
           <div class="link-field">
             <label for="figma">Figma / Design File</label>
-            <input type="text" id="figma" name="figma" placeholder="https://figma.com/file/...">
+            <input type="text" id="figma" placeholder="https://figma.com/file/...">
             <div class="error-message" id="err-figma"></div>
           </div>
 
           <div class="link-field">
             <label for="demoVideo">Demo Video</label>
-            <input type="text" id="demoVideo" name="demoVideo" placeholder="https://youtube.com/watch?v=... or Loom link">
+            <input type="text" id="demoVideo" placeholder="https://youtube.com/watch?v=... or Loom link">
             <div class="error-message" id="err-demoVideo"></div>
           </div>
         </div>
@@ -882,13 +866,13 @@
         
         <div class="form-section">
           <label for="whySelect">Why should Ground Zero invest in you? *</label>
-          <textarea id="whySelect" name="whySelect" placeholder="Tell us what makes you and your startup unique and why you'd be a great fit for Ground Zero..."></textarea>
+          <textarea id="whySelect" placeholder="Tell us what makes you and your startup unique and why you'd be a great fit for Ground Zero..."></textarea>
           <div class="error-message" id="err-whySelect"></div>
           <div class="hint">Write 50-150 words</div>
         </div>
 
         <div class="confirm-row">
-          <input type="checkbox" id="confirm" name="confirm">
+          <input type="checkbox" id="confirm">
           <label for="confirm">I confirm that all information provided is accurate and truthful. *</label>
         </div>
         <div class="error-message" id="err-confirm" style="margin-top:8px;"></div>
@@ -911,14 +895,11 @@
   </div>
 
   <!-- Success Message -->
-  <div id="successPanel">
+  <div id="successPanel" class="show" style="display:none;">
     <div class="success-card">
       <div class="success-icon">✓</div>
       <h2>Application Submitted!</h2>
       <p>Thank you for applying to Ground Zero. We've received your application and will review it shortly. Keep an eye on your email for updates!</p>
-      <button class="success-button" onclick="window.location.href='https://clysto.net'">
-        ← Back to Clysto.net
-      </button>
     </div>
   </div>
 </div>
@@ -927,11 +908,15 @@
   const STORAGE_KEY = "gz_application_draft";
   const TOTAL_STEPS = 6;
   let step = 0;
-  let isSubmitted = false;
+
+  // ===== SUPABASE CLIENT =====
+  const supabaseClient = window.SUPABASE_CONFIG
+    ? supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey)
+    : null;
 
   const state = {
     name:"", age:"", institution:"", gradeYear:"", course:"", about:"",
-    startupName:"", startupStage:"", idea:"",
+    startupName:"", startupStage:"", yearFounded:"", idea:"",
     helpNeeded:[], website:"", appLink:"", github:"", figma:"", demoVideo:"", linkedin:"",
     whySelect:"", confirmed:false
   };
@@ -941,19 +926,46 @@
     "Fundraising", "Business Strategy", "Pitching Skills"
   ];
 
+  // ===== WAIT FOR SUPABASE =====
+  function waitForSupabase() {
+    return new Promise((resolve) => {
+      if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        resolve();
+      } else {
+        const checkInterval = setInterval(() => {
+          if (typeof supabaseClient !== "undefined" && supabaseClient) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        // Timeout after 3 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          console.warn("Supabase config took longer than expected to load");
+          resolve();
+        }, 3000);
+      }
+    });
+  }
+
+  // ===== UI HELPERS =====
+  const el = (tag, ...classes) => {
+    const e = document.createElement(tag);
+    e.className = classes.join(" ");
+    return e;
+  };
+
   function renderProgress(){
     const trackEl = document.getElementById("stepsTrack");
     trackEl.innerHTML = "";
     for(let i = 0; i < TOTAL_STEPS; i++){
-      const dot = document.createElement("div");
-      dot.className = "step-dot";
+      const dot = el("div", "step-dot");
       if(i < step) dot.classList.add("done");
       if(i === step) dot.classList.add("current");
       dot.textContent = i + 1;
       trackEl.appendChild(dot);
       if(i < TOTAL_STEPS - 1){
-        const line = document.createElement("div");
-        line.className = "step-line";
+        const line = el("div", "step-line");
         if(i < step) line.classList.add("done");
         trackEl.appendChild(line);
       }
@@ -977,8 +989,7 @@
     const grid = document.getElementById("helpGrid");
     grid.innerHTML = "";
     helpOptions.forEach(opt=>{
-      const card = document.createElement("button");
-      card.className = "svc-card";
+      const card = el("button", "svc-card");
       card.type = "button";
       card.innerHTML = `<div class="chk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div><span>${opt}</span>`;
       card.addEventListener("click", (e)=>{
@@ -996,9 +1007,32 @@
     });
   }
 
+  function renderConfirmRow(){
+    const chk = document.getElementById("confirm");
+    chk.checked = state.confirmed;
+    chk.addEventListener("change", ()=>{
+      state.confirmed = chk.checked;
+      saveDraft();
+    });
+  }
+
+  // ===== VALIDATION =====
+  const ALL_ERROR_KEYS = [
+    "name","age","institution","gradeYear","course",
+    "about",
+    "startupName","startupStage","idea",
+    "helpNeeded",
+    "website","appLink","github","figma","demoVideo","linkedin",
+    "whySelect","confirm"
+  ];
+
   function clearErrors(){
-    document.querySelectorAll(".error-message").forEach(e => e.classList.remove("show"));
-    document.querySelectorAll("input, select, textarea").forEach(e => e.classList.remove("error"));
+    ALL_ERROR_KEYS.forEach(k=>{
+      const msg = document.getElementById("err-" + k);
+      if(msg){ msg.textContent = ""; msg.classList.remove("show"); }
+      const input = document.getElementById(k);
+      if(input) input.classList.remove("error");
+    });
   }
 
   function setError(key, msg){
@@ -1037,7 +1071,15 @@
         ok = false;
       }
     }
-    // Step 5 of 6 (links & portfolio) is intentionally optional — no validation here.
+    if(s === 4){
+      const requiredFields = [
+        ["website","Website"],
+        ["linkedin","LinkedIn"]
+      ];
+      requiredFields.forEach(([key,label])=>{
+        if(!state[key] || !state[key].trim()){ setError(key, label + " is required."); ok = false; }
+      });
+    }
     if(s === 5){
       if(!state.whySelect.trim()){ setError("whySelect","This field is required."); ok = false; }
       if(!state.confirmed){
@@ -1048,6 +1090,7 @@
     return ok;
   }
 
+  // ===== STORAGE =====
   function saveDraft(){
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, step })); }catch(e){}
   }
@@ -1062,6 +1105,7 @@
     }catch(e){}
   }
 
+  // ===== TEXT FIELDS =====
   const TEXT_FIELDS = ["name","age","institution","gradeYear","course","about",
     "startupName","idea","website","appLink","github","figma","demoVideo","linkedin","whySelect"];
 
@@ -1081,14 +1125,15 @@
       state.startupStage = stageSel.value;
       saveDraft();
     });
-    const confirm = document.getElementById("confirm");
-    confirm.checked = state.confirmed;
-    confirm.addEventListener("change", ()=>{
-      state.confirmed = confirm.checked;
+    const yearFounded = document.getElementById("yearFounded");
+    yearFounded.value = state.yearFounded || "";
+    yearFounded.addEventListener("input", ()=>{
+      state.yearFounded = yearFounded.value;
       saveDraft();
     });
   }
 
+  // ===== NAVIGATION =====
   function goToStep(target){
     step = Math.max(0, Math.min(target, TOTAL_STEPS - 1));
     renderProgress();
@@ -1111,6 +1156,7 @@
     goToStep(step - 1);
   });
 
+  // ===== SUBMIT =====
   document.getElementById("applicationForm").addEventListener("submit", async (e)=>{
     e.preventDefault();
     
@@ -1126,10 +1172,12 @@
     submitBtn.disabled = true;
     submitArrow.style.display = "none";
     submitLabel.textContent = "Submitting…";
-    const spinner = document.createElement("span");
-    spinner.className = "spinner";
+    const spinner = el("span", "spinner");
     submitBtn.insertBefore(spinner, submitLabel);
     submitErr.classList.remove("show");
+
+    // Wait for Supabase to be ready
+    await waitForSupabase();
 
     const payload = {
       name: state.name,
@@ -1152,19 +1200,15 @@
     };
 
     try{
-      if (!window.supabaseClient) {
-        console.error("Supabase client failed to initialize");
-        throw new Error("Supabase client failed to initialize.");
+      if(typeof supabaseClient === "undefined" || !supabaseClient) {
+        throw new Error("Supabase is not configured. Please check that supabase-config.js is loaded correctly.");
       }
-
-      const { data, error } = await window.supabaseClient
-        .from("student_founders_applications")
-        .insert(payload);
+      
+      const { error } = await supabaseClient.from("student_founders_applications").insert([payload]);
       if(error) throw error;
 
-      isSubmitted = true;
-      document.getElementById("formSection").classList.remove("show");
-      document.getElementById("successPanel").classList.add("show");
+      document.getElementById("stepFlow").style.display = "none";
+      document.getElementById("successPanel").style.display = "flex";
       localStorage.removeItem(STORAGE_KEY);
     }catch(err){
       console.error("[application submit]", err);
@@ -1176,8 +1220,10 @@
     }
   });
 
+  // ===== INIT =====
   loadDraft();
   buildHelpGrid();
+  renderConfirmRow();
   bindTextFields();
   renderProgress();
   renderStepPanels();
