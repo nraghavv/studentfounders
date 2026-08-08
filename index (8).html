@@ -1,0 +1,1445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ground Zero — Student Founders Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+<style>
+  :root{
+    --ink:#14181A;
+    --ink-soft:#5B6662;
+    --ink-faint:#8A9490;
+    --bg:#F9F8F3;
+    --primary:#00917D;
+    --primary-dark:#007A68;
+    --primary-wash:rgba(0,145,125,0.06);
+    --border:rgba(20,24,26,0.08);
+    --card:rgba(255,255,255,0.6);
+    --dark-bg:#0F1112;
+    --teal:#00917D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  /* ===== LANDING PAGE ===== */
+  #landingPage{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:20px;
+    background:linear-gradient(135deg, #0F1112 0%, #1a2120 100%);
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* ===== LANDING MASCOTS =====
+     Same illustrated character system as the success page, restyled for
+     the dark hero and arranged in its own unique composition (a low
+     cheering arc under the copy, plus two corner peeks) rather than the
+     success page's full ring layout. */
+  .landing-mascots{
+    --mascot-ink:#E9F5F2;
+    --mascot-white:#F6FFFC;
+    --mascot-teal:#2FE0C4;
+    --mascot-teal-line:#00917D;
+    --mascot-teal-soft:#8FF0DE;
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .landing-mascots .lm{
+    position:absolute;
+    transform-origin:center bottom;
+    animation:lmBob 5.5s ease-in-out infinite;
+    filter:drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+    opacity:0.92;
+  }
+
+  .landing-mascots .lm svg{ display:block; width:100%; height:100%; }
+  .landing-mascots .lm.flip svg{ transform:scaleX(-1); }
+
+  @keyframes lmBob{
+    0%,100%{ transform:translateY(0) rotate(var(--tilt, 0deg)); }
+    50%{ transform:translateY(-8px) rotate(var(--tilt, 0deg)); }
+  }
+
+  .landing-mascots .ls{
+    position:absolute;
+    animation:lmTwinkle 2.4s ease-in-out infinite;
+  }
+
+  @keyframes lmTwinkle{
+    0%,100%{ opacity:.2; transform:scale(.8) rotate(0deg); }
+    50%{ opacity:.85; transform:scale(1.15) rotate(20deg); }
+  }
+
+  .l1{ top:8%;   left:6%;   width:78px; --tilt:-9deg;  animation-delay:.2s; }
+  .l2{ top:14%;  right:7%;  width:66px; --tilt:10deg;  animation-delay:1.1s; }
+  .l3{ bottom:9%;  left:4%;   width:84px; --tilt:8deg;   animation-delay:.6s; }
+  .l4{ bottom:16%; left:19%;  width:58px; --tilt:-11deg; animation-delay:1.4s; }
+  .l5{ bottom:7%;  right:5%;  width:88px; --tilt:-7deg;  animation-delay:.4s; }
+  .l6{ bottom:18%; right:19%; width:60px; --tilt:12deg;  animation-delay:.9s; }
+  .l7{ top:38%;  left:1.5%; width:50px; --tilt:-14deg; animation-delay:1.6s; }
+  .l8{ top:42%;  right:1.5%; width:52px; --tilt:13deg;  animation-delay:.1s; }
+
+  .ls1{ top:22%; left:16%; width:16px; }
+  .ls2{ bottom:24%; right:14%; width:18px; animation-delay:.7s; }
+  .ls3{ top:60%; left:8%; width:14px; animation-delay:1.2s; }
+
+  @media (max-width:760px){
+    .l2, .l4, .l6, .l7, .l8{ display:none; }
+    .landing-mascots .lm{ opacity:.8; }
+  }
+
+  @media (max-width:520px){
+    .l1{ top:3%; left:-2%; width:56px; }
+    .l3{ bottom:4%; left:-2%; width:58px; }
+    .l5{ bottom:3%; right:-2%; width:60px; }
+    .ls1, .ls2, .ls3{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .landing-mascots .lm, .landing-mascots .ls{ animation:none; }
+  }
+
+  .grid-bg{
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(0,145,125,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,145,125,0.05) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:0.3;
+    pointer-events:none;
+  }
+
+  .landing-container{
+    max-width:700px;
+    position:relative;
+    z-index:1;
+    text-align:center;
+  }
+
+  .program-badge{
+    display:inline-block;
+    padding:8px 16px;
+    background:rgba(0,145,125,0.15);
+    border:1px solid rgba(0,145,125,0.3);
+    border-radius:24px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:24px;
+    animation:fadeInUp .6s ease .1s both;
+  }
+
+  .landing-title{
+    font-family:"Syne",serif;
+    font-size:clamp(2.5rem, 8vw, 4rem);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:#fff;
+    margin:0 0 12px;
+    animation:fadeInUp .6s ease .2s both;
+    line-height:1.1;
+  }
+
+  .landing-title .highlight{
+    color:var(--teal);
+  }
+
+  .landing-subtitle{
+    font-size:1.1rem;
+    color:rgba(255,255,255,0.7);
+    margin:0 0 32px;
+    line-height:1.6;
+    animation:fadeInUp .6s ease .3s both;
+  }
+
+  .program-desc{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(0,145,125,0.2);
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:40px;
+    animation:fadeInUp .6s ease .4s both;
+    font-size:15px;
+    color:rgba(255,255,255,0.8);
+    line-height:1.7;
+  }
+
+  .program-desc strong{
+    color:#fff;
+    font-weight:600;
+  }
+
+  .cta-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    padding:16px 40px;
+    border-radius:999px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 12px 32px rgba(0,145,125,0.3);
+    transition:all .3s ease;
+    animation:fadeInUp .6s ease .5s both;
+    font-family:inherit;
+  }
+
+  .cta-button:hover{
+    background:var(--primary-dark);
+    box-shadow:0 16px 40px rgba(0,145,125,0.4);
+    transform:translateY(-2px);
+  }
+
+  .cta-button:active{
+    transform:scale(0.98);
+  }
+
+  .arrow-icon{
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  @keyframes fadeInUp{
+    from{
+      opacity:0;
+      transform:translateY(20px);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  /* ===== FORM PAGE ===== */
+  #formSection{
+    position:relative;
+    padding:60px 24px;
+    display:none;
+  }
+
+  #formSection.show{
+    display:block;
+  }
+
+  .blobs{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+    pointer-events:none;
+  }
+
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    background:var(--primary);
+    filter:blur(70px);
+    opacity:.14;
+  }
+
+  .blob1{
+    width:480px;
+    height:480px;
+    left:-160px;
+    top:-120px;
+    animation:float1 22s ease-in-out infinite;
+  }
+
+  .blob2{
+    width:420px;
+    height:420px;
+    right:-140px;
+    top:220px;
+    opacity:.10;
+    animation:float2 26s ease-in-out infinite;
+  }
+
+  @keyframes float1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(50px,40px) scale(1.08);}
+  }
+
+  @keyframes float2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-40px,-30px) scale(0.94);}
+  }
+
+  .card{
+    max-width:640px;
+    margin:0 auto;
+    background:var(--card);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(20,24,26,0.06);
+    border-radius:24px;
+    padding:36px 32px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.05);
+  }
+
+  @media (max-width:640px){
+    .card{padding:24px 20px;}
+  }
+
+  .eyebrow{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--primary);
+    margin:0 0 8px;
+  }
+
+  /* progress */
+  .progress-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+
+  .steps-track{
+    display:flex;
+    align-items:center;
+    gap:0;
+    flex-wrap:wrap;
+  }
+
+  .step-dot{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10.5px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,0.5);
+    color:var(--ink-faint);
+    transition:all .25s;
+    flex-shrink:0;
+  }
+
+  .step-dot.current{
+    border-color:var(--primary);
+    color:var(--primary);
+    background:#fff;
+  }
+
+  .step-dot.done{
+    border-color:var(--primary);
+    background:var(--primary);
+    color:#fff;
+  }
+
+  .step-line{
+    flex:1;
+    height:2px;
+    background:var(--border);
+    margin:0 4px;
+    border-radius:1px;
+    transition:all .25s;
+  }
+
+  .step-line.done{
+    background:var(--primary);
+  }
+
+  .progress-bar{
+    width:100%;
+    height:3px;
+    background:var(--border);
+    border-radius:2px;
+    margin:16px 0;
+    overflow:hidden;
+  }
+
+  .progress-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--primary), var(--primary-dark));
+    transition:width .4s ease;
+    border-radius:2px;
+  }
+
+  .progress-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--ink-faint);
+    font-weight:500;
+  }
+
+  /* steps */
+  .step-panel{
+    display:none;
+    animation:fadeIn .3s ease;
+  }
+
+  .step-panel.active{
+    display:block;
+  }
+
+  @keyframes fadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+  }
+
+  .form-section{
+    margin-bottom:28px;
+  }
+
+  .form-section:last-of-type{
+    margin-bottom:0;
+  }
+
+  label{
+    display:block;
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+  }
+
+  .input-wrapper{
+    position:relative;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--ink);
+    background:#fff;
+    transition:all .2s;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-wash);
+  }
+
+  input.error,
+  select.error,
+  textarea.error{
+    border-color:#e74c3c;
+  }
+
+  input.error:focus,
+  select.error:focus,
+  textarea.error:focus{
+    box-shadow:0 0 0 3px rgba(231, 76, 60, 0.1);
+  }
+
+  textarea{
+    resize:vertical;
+    min-height:100px;
+  }
+
+  .error-message{
+    display:none;
+    font-size:13px;
+    color:#e74c3c;
+    margin-top:6px;
+    font-weight:500;
+  }
+
+  .error-message.show{
+    display:block;
+  }
+
+  .hint{
+    font-size:13px;
+    color:var(--ink-faint);
+    margin-top:6px;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  @media (max-width:640px){
+    .row{ grid-template-columns:1fr; }
+  }
+
+  /* svc cards */
+  .svc-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  @media (max-width:640px){
+    .svc-grid{ grid-template-columns:1fr; }
+  }
+
+  .svc-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    background:rgba(255,255,255,0.5);
+    border:1px solid var(--border);
+    border-radius:12px;
+    cursor:pointer;
+    transition:all .2s;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    text-align:left;
+  }
+
+  .svc-card:hover{
+    background:#fff;
+    border-color:var(--primary);
+  }
+
+  .svc-card.active{
+    background:var(--primary-wash);
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+
+  .svc-card .chk{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:20px;
+    height:20px;
+    border:1.5px solid currentColor;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+
+  .svc-card.active .chk{
+    background:var(--primary);
+    color:#fff;
+    border-color:var(--primary);
+  }
+
+  .svc-card .chk svg{
+    width:14px;
+    height:14px;
+    opacity:0;
+    transition:opacity .2s;
+  }
+
+  .svc-card.active .chk svg{
+    opacity:1;
+  }
+
+  /* links */
+  .links-section{
+    margin-bottom:28px;
+  }
+
+  .link-field{
+    margin-bottom:16px;
+  }
+
+  .link-field:last-child{
+    margin-bottom:0;
+  }
+
+  .link-field label{
+    margin-bottom:6px;
+  }
+
+  /* confirm */
+  .confirm-row{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:16px;
+    background:rgba(0,145,125,0.06);
+    border-radius:12px;
+    margin:20px 0 0;
+  }
+
+  .confirm-row input[type="checkbox"]{
+    width:20px;
+    height:20px;
+    margin-top:2px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+
+  .confirm-row label{
+    margin:0;
+    cursor:pointer;
+    font-size:14px;
+    line-height:1.5;
+  }
+
+  /* buttons */
+  .button-group{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:32px;
+    gap:12px;
+  }
+
+  button{
+    font-family:inherit;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 24px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:all .2s;
+  }
+
+  .btn-secondary{
+    background:rgba(255,255,255,0.5);
+    color:var(--ink);
+    border:1px solid var(--border);
+  }
+
+  .btn-secondary:hover{
+    background:#fff;
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+
+  .btn-secondary:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+
+  .btn-primary{
+    background:var(--primary);
+    color:#fff;
+    box-shadow:0 4px 12px rgba(0,145,125,0.2);
+  }
+
+  .btn-primary:hover{
+    background:var(--primary-dark);
+    box-shadow:0 6px 16px rgba(0,145,125,0.3);
+    transform:translateY(-1px);
+  }
+
+  .btn-primary:active{
+    transform:scale(0.98);
+  }
+
+  .btn-primary:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+  }
+
+  /* spinner */
+  .spinner{
+    display:inline-block;
+    width:16px;
+    height:16px;
+    border:2px solid rgba(255,255,255,0.3);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+  }
+
+  @keyframes spin{
+    to{ transform:rotate(360deg); }
+  }
+
+  /* success */
+  #successPanel{
+    display:none;
+    min-height:100vh;
+    padding:60px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #successPanel.show{
+    display:flex;
+  }
+
+  .success-card{
+    max-width:500px;
+    text-align:center;
+  }
+
+  .success-icon{
+    width:80px;
+    height:80px;
+    margin:0 auto 24px;
+    background:var(--primary-wash);
+    border:2px solid var(--primary);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+  }
+
+  .success-card h2{
+    font-family:"Syne",serif;
+    font-size:28px;
+    font-weight:700;
+    margin:0 0 12px;
+    color:var(--ink);
+  }
+
+  .success-card p{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin:0;
+    line-height:1.6;
+  }
+
+  /* error */
+  .submit-error{
+    display:none;
+    padding:14px 16px;
+    background:#fee;
+    border:1px solid #fcc;
+    border-radius:10px;
+    color:#c33;
+    font-size:14px;
+    margin-bottom:20px;
+  }
+
+  .submit-error.show{
+    display:block;
+  }
+</style>
+</head>
+<body>
+
+<div id="landingPage">
+  <div class="grid-bg"></div>
+
+  <!-- Decorative mascot crowd — cheering the applicant on. Unique
+       composition vs. the success page: a low arc under the copy plus
+       two slim corner peeks, instead of a full surrounding ring. -->
+  <div class="landing-mascots" aria-hidden="true">
+    <div class="lm l1"><svg viewBox="0 0 100 140"><use href="#mascot-square-wave"/></svg></div>
+    <div class="lm l2 flip"><svg viewBox="0 0 100 140"><use href="#mascot-marker-thumb"/></svg></div>
+    <div class="lm l3"><svg viewBox="0 0 100 140"><use href="#mascot-brush-wave"/></svg></div>
+    <div class="lm l4 flip"><svg viewBox="0 0 100 140"><use href="#mascot-square-wink"/></svg></div>
+    <div class="lm l5 flip"><svg viewBox="0 0 100 140"><use href="#mascot-marker-wink"/></svg></div>
+    <div class="lm l6"><svg viewBox="0 0 100 140"><use href="#mascot-brush-heart"/></svg></div>
+    <div class="lm l7"><svg viewBox="0 0 100 140"><use href="#mascot-square-phone"/></svg></div>
+    <div class="lm l8 flip"><svg viewBox="0 0 100 140"><use href="#mascot-marker-thumb"/></svg></div>
+
+    <svg class="ls ls1" viewBox="0 0 24 24"><use href="#spark"/></svg>
+    <svg class="ls ls2" viewBox="0 0 24 24"><use href="#spark"/></svg>
+    <svg class="ls ls3" viewBox="0 0 24 24"><use href="#spark"/></svg>
+  </div>
+
+  <!-- Symbol defs: reusable mascot art (same character system as the
+       success page, restyled above via CSS variables for this dark hero) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+
+      <symbol id="spark" viewBox="0 0 24 24">
+        <path d="M12 0 C12 7 13 10 24 12 C13 14 12 17 12 24 C12 17 11 14 0 12 C11 10 12 7 12 0Z" fill="var(--mascot-teal)"/>
+      </symbol>
+
+      <symbol id="mascot-base-square" viewBox="0 0 100 140">
+        <rect x="38" y="96" width="8" height="26" rx="4" fill="var(--mascot-ink)"/>
+        <rect x="55" y="96" width="8" height="26" rx="4" fill="var(--mascot-ink)"/>
+        <path d="M32 120h16a4 4 0 0 1 4 4v2H30v-2a4 4 0 0 1 2-4Z" fill="var(--mascot-teal)"/>
+        <path d="M49 120h16a4 4 0 0 1 4 4v2H47v-2a4 4 0 0 1 2-4Z" fill="var(--mascot-ink)"/>
+        <rect x="22" y="30" width="56" height="56" rx="14" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="3"/>
+        <g stroke="var(--mascot-ink)" stroke-opacity="0.14" stroke-width="1.4">
+          <line x1="22" y1="47" x2="78" y2="47"/>
+          <line x1="22" y1="64" x2="78" y2="64"/>
+          <line x1="22" y1="81" x2="78" y2="81"/>
+          <line x1="38" y1="30" x2="38" y2="86"/>
+          <line x1="54" y1="30" x2="54" y2="86"/>
+          <line x1="70" y1="30" x2="70" y2="86"/>
+        </g>
+        <path d="M62 32c4-14 20-18 26-12-8 2-12 8-12 8s10-2 16 4c-10 2-16 10-16 10s6 8 2 16c-6-10-16-8-16-8s-4-10 0-18Z" fill="var(--mascot-teal)" stroke="var(--mascot-teal-line)" stroke-width="1.5"/>
+      </symbol>
+
+      <symbol id="mascot-square-wink" viewBox="0 0 100 140">
+        <use href="#mascot-base-square"/>
+        <path d="M36 56c2-2 8-2 10 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <circle cx="60" cy="56" r="3" fill="var(--mascot-ink)"/>
+        <path d="M42 68c3 3 9 3 12 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M18 78c-6 2-10 8-8 14" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="9" cy="94" r="4.5" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.6"/>
+        <path d="M82 78c6 2 10 8 8 14" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+      <symbol id="mascot-square-wave" viewBox="0 0 100 140">
+        <use href="#mascot-base-square"/>
+        <circle cx="38" cy="57" r="3" fill="var(--mascot-ink)"/>
+        <circle cx="60" cy="57" r="3" fill="var(--mascot-ink)"/>
+        <path d="M42 69c3 3 9 3 12 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M20 80c-10-4-16 2-18 10" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="2" cy="88" r="4.5" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.6"/>
+        <path d="M80 80c8-8 18-6 22 0" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="94" cy="76" r="4.5" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.6"/>
+      </symbol>
+
+      <symbol id="mascot-square-phone" viewBox="0 0 100 140">
+        <use href="#mascot-base-square"/>
+        <path d="M35 56c2-2 8-2 10 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M57 56c2-2 8-2 10 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M43 68c3 3 9 3 12 0" stroke="var(--mascot-ink)" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <path d="M78 76c8 2 12 10 10 18" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <rect x="82" y="90" width="14" height="20" rx="3" fill="var(--mascot-ink)"/>
+        <rect x="84" y="93" width="10" height="13" rx="1.4" fill="var(--mascot-teal-soft)"/>
+        <path d="M22 80c-6 2-10 8-8 14" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+      <symbol id="mascot-base-marker" viewBox="0 0 100 140">
+        <rect x="38" y="128" width="24" height="6" rx="3" fill="var(--mascot-ink)" opacity=".22"/>
+        <rect x="40" y="52" width="20" height="76" rx="9" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="3"/>
+        <g stroke="var(--mascot-ink)" stroke-opacity="0.14" stroke-width="1.3">
+          <line x1="40" y1="70" x2="60" y2="70"/>
+          <line x1="40" y1="88" x2="60" y2="88"/>
+          <line x1="40" y1="106" x2="60" y2="106"/>
+        </g>
+        <rect x="37" y="42" width="26" height="12" rx="3" fill="var(--mascot-ink)"/>
+        <path d="M38 12c0-7 5-12 12-12s12 5 12 12v32H38V12Z" fill="var(--mascot-teal)" stroke="var(--mascot-teal-line)" stroke-width="2.6"/>
+        <ellipse cx="44" cy="12" rx="3.4" ry="7" fill="var(--mascot-teal-soft)" opacity=".7"/>
+      </symbol>
+
+      <symbol id="mascot-marker-wink" viewBox="0 0 100 140">
+        <use href="#mascot-base-marker"/>
+        <path d="M42 25c2-2 6-2 8 0" stroke="var(--mascot-ink)" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <circle cx="58" cy="25" r="2.6" fill="var(--mascot-ink)"/>
+        <path d="M46 34c2.5 2.5 7.5 2.5 10 0" stroke="var(--mascot-ink)" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M40 62c-9 0-13 6-12 13" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="26" cy="76" r="4.5" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.6"/>
+        <path d="M60 62c9 0 13 6 12 13" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+      <symbol id="mascot-marker-thumb" viewBox="0 0 100 140">
+        <use href="#mascot-base-marker"/>
+        <circle cx="46" cy="25" r="2.6" fill="var(--mascot-ink)"/>
+        <circle cx="54" cy="25" r="2.6" fill="var(--mascot-ink)"/>
+        <path d="M46 34c2.5 2.5 7.5 2.5 10 0" stroke="var(--mascot-ink)" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M60 62c10-2 16 3 17 10" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M74 66l3-7a3 3 0 0 1 5 2l-1 5h4a3 3 0 0 1 3 4l-3 9a4 4 0 0 1-4 3h-9a3 3 0 0 1-3-3v-9a3 3 0 0 1 1-2Z" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.4"/>
+        <path d="M40 62c-9 0-13 6-12 13" stroke="var(--mascot-ink)" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+      <symbol id="mascot-base-brush" viewBox="0 0 100 140">
+        <path d="M46 76l-5 46a3.5 3.5 0 0 0 7 0l2-46Z" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.6"/>
+        <rect x="40" y="58" width="20" height="20" rx="7" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="3"/>
+        <rect x="38" y="48" width="24" height="12" rx="2" fill="var(--mascot-ink)"/>
+        <path d="M38 48c1-20 10-34 12-44 3 8 3 16 0 22 6-8 14-10 20-6-8 4-11 10-9 16 6-2 12 2 13 8-8-2-14 2-16 8-4 8-14 10-20-4Z" fill="var(--mascot-teal)" stroke="var(--mascot-teal-line)" stroke-width="2.4"/>
+      </symbol>
+
+      <symbol id="mascot-brush-heart" viewBox="0 0 100 140">
+        <use href="#mascot-base-brush"/>
+        <circle cx="45" cy="67" r="2.6" fill="var(--mascot-ink)"/>
+        <circle cx="55" cy="67" r="2.6" fill="var(--mascot-ink)"/>
+        <path d="M44 74c2.5 2 9.5 2 12 0" stroke="var(--mascot-ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M60 68c8-2 13 4 12 11" stroke="var(--mascot-ink)" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <path d="M74 72c-2-2-6-1-6 3 0 3 6 7 6 7s6-4 6-7c0-4-4-5-6-3Z" fill="var(--mascot-teal)" stroke="var(--mascot-teal-line)" stroke-width="1.6"/>
+        <path d="M40 68c-8-2-13 4-12 11" stroke="var(--mascot-ink)" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+      <symbol id="mascot-brush-wave" viewBox="0 0 100 140">
+        <use href="#mascot-base-brush"/>
+        <path d="M43 68c2-2 6-2 8 0" stroke="var(--mascot-ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="57" cy="68" r="2.6" fill="var(--mascot-ink)"/>
+        <path d="M44 75c2.5 2 9.5 2 12 0" stroke="var(--mascot-ink)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M60 68c10-4 18 2 19 10" stroke="var(--mascot-ink)" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <circle cx="82" cy="72" r="4" fill="var(--mascot-white)" stroke="var(--mascot-ink)" stroke-width="2.4"/>
+        <path d="M40 68c-8-2-13 4-12 11" stroke="var(--mascot-ink)" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      </symbol>
+
+    </defs>
+  </svg>
+
+  <div class="landing-container">
+    <div class="program-badge">Student Founders Program</div>
+    <h1 class="landing-title">Build Your <span class="highlight">Future</span></h1>
+    <p class="landing-subtitle">Join Ground Zero and accelerate your startup journey with mentorship, resources, and a community of visionary builders.</p>
+    <div class="program-desc">
+      <strong>What you'll get:</strong> 1-on-1 mentorship from experienced founders, technical resources & tools, networking with peers, and potential funding opportunities. We support student founders at all stages—from idea to scale.
+    </div>
+    <button class="cta-button" onclick="startApplication()">
+      <span>Start Application</span>
+      <span class="arrow-icon">→</span>
+    </button>
+  </div>
+</div>
+
+<div id="formSection">
+  <div class="blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+  </div>
+
+  <div class="card">
+    <div class="progress-top">
+      <div class="eyebrow">Application Progress</div>
+      <span id="pctLabel">0%</span>
+    </div>
+    <div id="stepsTrack" class="steps-track"></div>
+    <div class="progress-bar">
+      <div id="barFill" class="progress-bar-fill"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="stepCaption">Step 1 of 6</span>
+    </div>
+
+    <form id="applicationForm" onsubmit="return false;">
+      <!-- STEP 0: Personal Info -->
+      <div class="step-panel active">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Tell us about yourself</h2>
+        
+        <div class="form-section">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" placeholder="John Doe">
+          <div class="error-message" id="err-name"></div>
+        </div>
+
+        <div class="row">
+          <div class="form-section">
+            <label for="age">Age *</label>
+            <input type="number" id="age" placeholder="21" min="16" max="50">
+            <div class="error-message" id="err-age"></div>
+          </div>
+          <div class="form-section">
+            <label for="institution">School / College *</label>
+            <input type="text" id="institution" placeholder="SRMIST, IIT Madras, etc.">
+            <div class="error-message" id="err-institution"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-section">
+            <label for="gradeYear">Grade / Year *</label>
+            <input type="text" id="gradeYear" placeholder="2nd Year, 12th Grade">
+            <div class="error-message" id="err-gradeYear"></div>
+          </div>
+          <div class="form-section">
+            <label for="course">Course / Stream *</label>
+            <input type="text" id="course" placeholder="B.Tech CSE, B.Sc Physics">
+            <div class="error-message" id="err-course"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: About You -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Tell us your story</h2>
+        
+        <div class="form-section">
+          <label for="about">What drives you as a builder? *</label>
+          <textarea id="about" placeholder="Share your passion, background, and what motivates you to build..."></textarea>
+          <div class="error-message" id="err-about"></div>
+          <div class="hint">Write 50-200 words</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Startup Info -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">About your startup</h2>
+        
+        <div class="form-section">
+          <label for="startupName">Startup Name *</label>
+          <input type="text" id="startupName" placeholder="Your startup name">
+          <div class="error-message" id="err-startupName"></div>
+        </div>
+
+        <div class="row">
+          <div class="form-section">
+            <label for="startupStage">Current Stage *</label>
+            <select id="startupStage">
+              <option value="">Select a stage</option>
+              <option value="Idea">Idea Stage</option>
+              <option value="Prototype">Prototype</option>
+              <option value="MVP">MVP</option>
+              <option value="Early Users">Early Users (Launched)</option>
+              <option value="Revenue">Revenue</option>
+            </select>
+            <div class="error-message" id="err-startupStage"></div>
+          </div>
+          <div class="form-section">
+            <label for="yearFounded">Year Founded (if applicable)</label>
+            <input type="number" id="yearFounded" placeholder="2024" min="2015" max="2030">
+            <div class="error-message" id="err-yearFounded"></div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label for="idea">What problem are you solving? *</label>
+          <textarea id="idea" placeholder="Describe your startup idea, the problem you're solving, and your vision..."></textarea>
+          <div class="error-message" id="err-idea"></div>
+          <div class="hint">Write 50-200 words</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Help Needed -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Where can we help? *</h2>
+        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Select all that apply</p>
+        <div id="helpGrid" class="svc-grid"></div>
+        <div class="error-message" id="err-helpNeeded" style="display:none;"></div>
+      </div>
+
+      <!-- STEP 4: Links & Portfolio -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Share your work</h2>
+        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Links to your website, profiles, and demo (required fields marked with *)</p>
+        
+        <div class="links-section">
+          <div class="link-field">
+            <label for="website">Website / Portfolio *</label>
+            <input type="text" id="website" placeholder="https://yourwebsite.com">
+            <div class="error-message" id="err-website"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="linkedin">LinkedIn Profile *</label>
+            <input type="text" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+            <div class="error-message" id="err-linkedin"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="appLink">App / Product Link</label>
+            <input type="text" id="appLink" placeholder="https://app.example.com">
+            <div class="error-message" id="err-appLink"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="github">GitHub Profile</label>
+            <input type="text" id="github" placeholder="https://github.com/yourprofile">
+            <div class="error-message" id="err-github"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="figma">Figma / Design File</label>
+            <input type="text" id="figma" placeholder="https://figma.com/file/...">
+            <div class="error-message" id="err-figma"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="demoVideo">Demo Video</label>
+            <input type="text" id="demoVideo" placeholder="https://youtube.com/watch?v=... or Loom link">
+            <div class="error-message" id="err-demoVideo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Final -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Final thoughts</h2>
+        
+        <div class="form-section">
+          <label for="whySelect">Why should Ground Zero invest in you? *</label>
+          <textarea id="whySelect" placeholder="Tell us what makes you and your startup unique and why you'd be a great fit for Ground Zero..."></textarea>
+          <div class="error-message" id="err-whySelect"></div>
+          <div class="hint">Write 50-150 words</div>
+        </div>
+
+        <div class="confirm-row">
+          <input type="checkbox" id="confirm">
+          <label for="confirm">I confirm that all information provided is accurate and truthful. *</label>
+        </div>
+        <div class="error-message" id="err-confirm" style="margin-top:8px;"></div>
+
+        <div id="submitErr" class="submit-error">
+          Something went wrong. Please check your connection and try again.
+        </div>
+      </div>
+
+      <!-- Step Flow Actions -->
+      <div id="stepFlow" class="button-group">
+        <button type="button" id="backBtn" class="btn btn-secondary">← Back</button>
+        <button type="button" id="nextBtn" class="btn btn-primary">Next →</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary" style="display:none;">
+          <span id="submitLabel">Submit Application</span>
+          <span id="submitArrow">→</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = "gz_application_draft";
+  const TOTAL_STEPS = 6;
+  let step = 0;
+
+  // ===== SUPABASE CLIENT =====
+  const supabaseClient = window.SUPABASE_CONFIG
+    ? supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey)
+    : null;
+
+  const state = {
+    name:"", age:"", institution:"", gradeYear:"", course:"", about:"",
+    startupName:"", startupStage:"", yearFounded:"", idea:"",
+    helpNeeded:[], website:"", appLink:"", github:"", figma:"", demoVideo:"", linkedin:"",
+    whySelect:"", confirmed:false
+  };
+
+  const helpOptions = [
+    "Product Development", "Marketing", "Technical Setup",
+    "Fundraising", "Business Strategy", "Pitching Skills"
+  ];
+
+  // ===== WAIT FOR SUPABASE =====
+  function waitForSupabase() {
+    return new Promise((resolve) => {
+      if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        resolve();
+      } else {
+        const checkInterval = setInterval(() => {
+          if (typeof supabaseClient !== "undefined" && supabaseClient) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        // Timeout after 3 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          console.warn("Supabase config took longer than expected to load");
+          resolve();
+        }, 3000);
+      }
+    });
+  }
+
+  // ===== UI HELPERS =====
+  const el = (tag, ...classes) => {
+    const e = document.createElement(tag);
+    e.className = classes.join(" ");
+    return e;
+  };
+
+  function renderProgress(){
+    const trackEl = document.getElementById("stepsTrack");
+    trackEl.innerHTML = "";
+    for(let i = 0; i < TOTAL_STEPS; i++){
+      const dot = el("div", "step-dot");
+      if(i < step) dot.classList.add("done");
+      if(i === step) dot.classList.add("current");
+      dot.textContent = i + 1;
+      trackEl.appendChild(dot);
+      if(i < TOTAL_STEPS - 1){
+        const line = el("div", "step-line");
+        if(i < step) line.classList.add("done");
+        trackEl.appendChild(line);
+      }
+    }
+    // step is 0-indexed (0..TOTAL_STEPS-1). Progress reflects how many
+    // sections have been *completed so far* — the section currently being
+    // filled in has not been completed yet, so step 0 (first section,
+    // nothing submitted yet) correctly starts at 0%.
+    const pct = Math.round((step / TOTAL_STEPS) * 100);
+    document.getElementById("pctLabel").textContent = pct + "%";
+    document.getElementById("barFill").style.width = pct + "%";
+    document.getElementById("stepCaption").textContent = `Step ${step + 1} of ${TOTAL_STEPS}`;
+  }
+
+  function renderStepPanels(){
+    document.querySelectorAll(".step-panel").forEach((p, i)=>{
+      p.classList.toggle("active", i === step);
+    });
+    document.getElementById("backBtn").disabled = step === 0;
+    document.getElementById("nextBtn").style.display = step === TOTAL_STEPS - 1 ? "none" : "inline-flex";
+    document.getElementById("submitBtn").style.display = step === TOTAL_STEPS - 1 ? "inline-flex" : "none";
+  }
+
+  function buildHelpGrid(){
+    const grid = document.getElementById("helpGrid");
+    grid.innerHTML = "";
+    helpOptions.forEach(opt=>{
+      const card = el("button", "svc-card");
+      card.type = "button";
+      card.innerHTML = `<div class="chk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div><span>${opt}</span>`;
+      card.addEventListener("click", (e)=>{
+        e.preventDefault();
+        card.classList.toggle("active");
+        if(card.classList.contains("active")){
+          if(!state.helpNeeded.includes(opt)) state.helpNeeded.push(opt);
+        }else{
+          state.helpNeeded = state.helpNeeded.filter(x => x !== opt);
+        }
+        saveDraft();
+      });
+      if(state.helpNeeded.includes(opt)) card.classList.add("active");
+      grid.appendChild(card);
+    });
+  }
+
+  function renderConfirmRow(){
+    const chk = document.getElementById("confirm");
+    chk.checked = state.confirmed;
+    chk.addEventListener("change", ()=>{
+      state.confirmed = chk.checked;
+      saveDraft();
+    });
+  }
+
+  // ===== VALIDATION =====
+  const ALL_ERROR_KEYS = [
+    "name","age","institution","gradeYear","course",
+    "about",
+    "startupName","startupStage","idea",
+    "helpNeeded",
+    "website","appLink","github","figma","demoVideo","linkedin",
+    "whySelect","confirm"
+  ];
+
+  function clearErrors(){
+    ALL_ERROR_KEYS.forEach(k=>{
+      const msg = document.getElementById("err-" + k);
+      if(msg){ msg.textContent = ""; msg.classList.remove("show"); }
+      const input = document.getElementById(k);
+      if(input) input.classList.remove("error");
+    });
+  }
+
+  function setError(key, msg){
+    const el = document.getElementById("err-" + key);
+    if(el){
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+    const input = document.getElementById(key);
+    if(input) input.classList.add("error");
+  }
+
+  function validateStep(s){
+    clearErrors();
+    let ok = true;
+    if(s === 0){
+      if(!state.name.trim()){ setError("name","Full name is required."); ok = false; }
+      if(!state.age){ setError("age","Age is required."); ok = false; }
+      if(!state.institution.trim()){ setError("institution","School / college name is required."); ok = false; }
+      if(!state.gradeYear.trim()){ setError("gradeYear","Grade / year is required."); ok = false; }
+      if(!state.course.trim()){ setError("course","Course is required."); ok = false; }
+    }
+    if(s === 1){
+      if(!state.about.trim()){ setError("about","This field is required."); ok = false; }
+    }
+    if(s === 2){
+      if(!state.startupName.trim()){ setError("startupName","Startup name is required."); ok = false; }
+      if(!state.startupStage){ setError("startupStage","Please select a stage."); ok = false; }
+      if(!state.idea.trim()){ setError("idea","Please describe your startup."); ok = false; }
+    }
+    if(s === 3){
+      if(state.helpNeeded.length === 0){
+        const el = document.getElementById("err-helpNeeded");
+        el.textContent = "Please select at least one area where we can help.";
+        el.style.display = "block";
+        ok = false;
+      }
+    }
+    if(s === 4){
+      const requiredFields = [
+        ["website","Website"],
+        ["linkedin","LinkedIn"]
+      ];
+      requiredFields.forEach(([key,label])=>{
+        if(!state[key] || !state[key].trim()){ setError(key, label + " is required."); ok = false; }
+      });
+    }
+    if(s === 5){
+      if(!state.whySelect.trim()){ setError("whySelect","This field is required."); ok = false; }
+      if(!state.confirmed){
+        setError("confirm","Please confirm your information is accurate before submitting.");
+        ok = false;
+      }
+    }
+    return ok;
+  }
+
+  // ===== STORAGE =====
+  function saveDraft(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, step })); }catch(e){}
+  }
+
+  function loadDraft(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const parsed = JSON.parse(raw);
+      if(parsed.state) Object.assign(state, parsed.state);
+      if(typeof parsed.step === "number") step = parsed.step;
+    }catch(e){}
+  }
+
+  // ===== TEXT FIELDS =====
+  const TEXT_FIELDS = ["name","age","institution","gradeYear","course","about",
+    "startupName","idea","website","appLink","github","figma","demoVideo","linkedin","whySelect"];
+
+  function bindTextFields(){
+    TEXT_FIELDS.forEach(key=>{
+      const input = document.getElementById(key);
+      if(!input) return;
+      input.value = state[key] || "";
+      input.addEventListener("input", ()=>{
+        state[key] = input.value;
+        saveDraft();
+      });
+    });
+    const stageSel = document.getElementById("startupStage");
+    stageSel.value = state.startupStage || "";
+    stageSel.addEventListener("change", ()=>{
+      state.startupStage = stageSel.value;
+      saveDraft();
+    });
+    const yearFounded = document.getElementById("yearFounded");
+    yearFounded.value = state.yearFounded || "";
+    yearFounded.addEventListener("input", ()=>{
+      state.yearFounded = yearFounded.value;
+      saveDraft();
+    });
+  }
+
+  // ===== NAVIGATION =====
+  function goToStep(target){
+    step = Math.max(0, Math.min(target, TOTAL_STEPS - 1));
+    renderProgress();
+    renderStepPanels();
+    document.getElementById("formSection").scrollIntoView({behavior:"smooth", block:"start"});
+    saveDraft();
+  }
+
+  function startApplication(){
+    document.getElementById("landingPage").style.display = "none";
+    document.getElementById("formSection").classList.add("show");
+  }
+
+  document.getElementById("nextBtn").addEventListener("click", ()=>{
+    if(!validateStep(step)) return;
+    goToStep(step + 1);
+  });
+
+  document.getElementById("backBtn").addEventListener("click", ()=>{
+    goToStep(step - 1);
+  });
+
+  // ===== SUBMIT =====
+  document.getElementById("applicationForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    
+    for(let i = 0; i < TOTAL_STEPS; i++){
+      if(!validateStep(i)){ goToStep(i); return; }
+    }
+
+    const submitBtn = document.getElementById("submitBtn");
+    const submitLabel = document.getElementById("submitLabel");
+    const submitArrow = document.getElementById("submitArrow");
+    const submitErr = document.getElementById("submitErr");
+
+    submitBtn.disabled = true;
+    submitArrow.style.display = "none";
+    submitLabel.textContent = "Submitting…";
+    const spinner = el("span", "spinner");
+    submitBtn.insertBefore(spinner, submitLabel);
+    submitErr.classList.remove("show");
+
+    // Wait for Supabase to be ready
+    await waitForSupabase();
+
+    const payload = {
+      name: state.name,
+      age: state.age,
+      institution: state.institution,
+      grade_year: state.gradeYear || null,
+      course: state.course || null,
+      about: state.about || null,
+      startup_name: state.startupName || null,
+      startup_stage: state.startupStage || null,
+      idea: state.idea || null,
+      help_needed: state.helpNeeded.length > 0 ? state.helpNeeded.join(", ") : null,
+      website: state.website || null,
+      app_link: state.appLink || null,
+      github: state.github || null,
+      figma: state.figma || null,
+      demo_video: state.demoVideo || null,
+      linkedin: state.linkedin || null,
+      why_select: state.whySelect || null
+    };
+
+    try{
+      if(typeof supabaseClient === "undefined" || !supabaseClient) {
+        throw new Error("Supabase is not configured. Please check that supabase-config.js is loaded correctly.");
+      }
+      
+      const { error } = await supabaseClient.from("student_founders_applications").insert([payload]);
+      if(error) throw error;
+
+      // Application successfully saved — reflect 100% completion, clear the
+      // draft, then navigate to the dedicated success page. No in-page
+      // success panel / scroll anymore.
+      document.getElementById("pctLabel").textContent = "100%";
+      document.getElementById("barFill").style.width = "100%";
+      localStorage.removeItem(STORAGE_KEY);
+      window.location.href = "success.html";
+      return;
+    }catch(err){
+      console.error("[application submit]", err);
+      submitErr.classList.add("show");
+      submitBtn.disabled = false;
+      spinner.remove();
+      submitArrow.style.display = "inline";
+      submitLabel.textContent = "Submit Application";
+    }
+  });
+
+  // ===== INIT =====
+  loadDraft();
+  buildHelpGrid();
+  renderConfirmRow();
+  bindTextFields();
+  renderProgress();
+  renderStepPanels();
+</script>
+</body>
+</html>
