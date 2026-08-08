@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ground Zero — Student Founders Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+<style>
+  :root{
+    --ink:#14181A;
+    --ink-soft:#5B6662;
+    --ink-faint:#8A9490;
+    --bg:#F9F8F3;
+    --primary:#00917D;
+    --primary-dark:#007A68;
+    --primary-wash:rgba(0,145,125,0.06);
+    --border:rgba(20,24,26,0.08);
+    --card:rgba(255,255,255,0.6);
+    --dark-bg:#0F1112;
+    --teal:#00917D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  #landingPage{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:20px;
+    background:linear-gradient(135deg, #0F1112 0%, #1a2120 100%);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .grid-bg{
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(0,145,125,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,145,125,0.05) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:0.3;
+    pointer-events:none;
+  }
+
+  .landing-container{
+    max-width:700px;
+    position:relative;
+    z-index:1;
+    text-align:center;
+  }
+
+  .program-badge{
+    display:inline-block;
+    padding:8px 16px;
+    background:rgba(0,145,125,0.15);
+    border:1px solid rgba(0,145,125,0.3);
+    border-radius:24px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:24px;
+    animation:fadeInUp .6s ease .1s both;
+  }
+
+  .landing-title{
+    font-family:"Syne",serif;
+    font-size:clamp(2.5rem, 8vw, 4rem);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    color:#fff;
+    margin:0 0 12px;
+    animation:fadeInUp .6s ease .2s both;
+    line-height:1.1;
+  }
+
+  .landing-title .highlight{
+    color:var(--teal);
+  }
+
+  .landing-subtitle{
+    font-size:1.1rem;
+    color:rgba(255,255,255,0.7);
+    margin:0 0 32px;
+    line-height:1.6;
+    animation:fadeInUp .6s ease .3s both;
+  }
+
+  .program-desc{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(0,145,125,0.2);
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:40px;
+    animation:fadeInUp .6s ease .4s both;
+    font-size:15px;
+    color:rgba(255,255,255,0.8);
+    line-height:1.7;
+  }
+
+  .program-desc strong{
+    color:#fff;
+    font-weight:600;
+  }
+
+  .cta-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    padding:16px 40px;
+    border-radius:999px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 12px 32px rgba(0,145,125,0.3);
+    transition:all .3s ease;
+    animation:fadeInUp .6s ease .5s both;
+    font-family:inherit;
+  }
+
+  .cta-button:hover{
+    background:var(--primary-dark);
+    box-shadow:0 16px 40px rgba(0,145,125,0.4);
+    transform:translateY(-2px);
+  }
+
+  .cta-button:active{
+    transform:scale(0.98);
+  }
+
+  .arrow-icon{
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  @keyframes fadeInUp{
+    from{
+      opacity:0;
+      transform:translateY(20px);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  #formSection{
+    position:relative;
+    padding:60px 24px;
+    display:none;
+  }
+
+  #formSection.show{
+    display:block;
+  }
+
+  .blobs{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+    pointer-events:none;
+  }
+
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    background:var(--primary);
+    filter:blur(70px);
+    opacity:.14;
+  }
+
+  .blob1{
+    width:480px;
+    height:480px;
+    left:-160px;
+    top:-120px;
+    animation:float1 22s ease-in-out infinite;
+  }
+
+  .blob2{
+    width:420px;
+    height:420px;
+    right:-140px;
+    top:220px;
+    opacity:.10;
+    animation:float2 26s ease-in-out infinite;
+  }
+
+  @keyframes float1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(50px,40px) scale(1.08);}
+  }
+
+  @keyframes float2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-40px,-30px) scale(0.94);}
+  }
+
+  .card{
+    max-width:640px;
+    margin:0 auto;
+    background:var(--card);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(20,24,26,0.06);
+    border-radius:24px;
+    padding:36px 32px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.05);
+  }
+
+  @media (max-width:640px){
+    .card{padding:24px 20px;}
+  }
+
+  .eyebrow{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--primary);
+    margin:0 0 8px;
+  }
+
+  .progress-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+
+  .steps-track{
+    display:flex;
+    align-items:center;
+    gap:0;
+    flex-wrap:wrap;
+  }
+
+  .step-dot{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10.5px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,0.5);
+    color:var(--ink-faint);
+    transition:all .25s;
+    flex-shrink:0;
+  }
+
+  .step-dot.current{
+    border-color:var(--primary);
+    color:var(--primary);
+    background:#fff;
+  }
+
+  .step-dot.done{
+    border-color:var(--primary);
+    background:var(--primary);
+    color:#fff;
+  }
+
+  .step-line{
+    flex:1;
+    height:2px;
+    background:var(--border);
+    margin:0 4px;
+    border-radius:1px;
+    transition:all .25s;
+  }
+
+  .step-line.done{
+    background:var(--primary);
+  }
+
+  .progress-bar{
+    width:100%;
+    height:3px;
+    background:var(--border);
+    border-radius:2px;
+    margin:16px 0;
+    overflow:hidden;
+  }
+
+  .progress-bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--primary), var(--primary-dark));
+    transition:width .4s ease;
+    border-radius:2px;
+  }
+
+  .progress-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--ink-faint);
+    font-weight:500;
+  }
+
+  .step-panel{
+    display:none;
+    animation:fadeIn .3s ease;
+  }
+
+  .step-panel.active{
+    display:block;
+  }
+
+  @keyframes fadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+  }
+
+  .form-section{
+    margin-bottom:28px;
+  }
+
+  .form-section:last-of-type{
+    margin-bottom:0;
+  }
+
+  label{
+    display:block;
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+  }
+
+  .input-wrapper{
+    position:relative;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--ink);
+    background:#fff;
+    transition:all .2s;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-wash);
+  }
+
+  input.error,
+  select.error,
+  textarea.error{
+    border-color:#e74c3c;
+  }
+
+  input.error:focus,
+  select.error:focus,
+  textarea.error:focus{
+    box-shadow:0 0 0 3px rgba(231, 76, 60, 0.1);
+  }
+
+  textarea{
+    resize:vertical;
+    min-height:100px;
+  }
+
+  .error-message{
+    display:none;
+    font-size:13px;
+    color:#e74c3c;
+    margin-top:6px;
+    font-weight:500;
+  }
+
+  .error-message.show{
+    display:block;
+  }
+
+  .hint{
+    font-size:13px;
+    color:var(--ink-faint);
+    margin-top:6px;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  @media (max-width:640px){
+    .row{ grid-template-columns:1fr; }
+  }
+
+  .svc-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  @media (max-width:640px){
+    .svc-grid{ grid-template-columns:1fr; }
+  }
+
+  .svc-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    background:rgba(255,255,255,0.5);
+    border:1px solid var(--border);
+    border-radius:12px;
+    cursor:pointer;
+    transition:all .2s;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    text-align:left;
+  }
+
+  .svc-card:hover{
+    background:#fff;
+    border-color:var(--primary);
+  }
+
+  .svc-card.active{
+    background:var(--primary-wash);
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+
+  .svc-card .chk{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:20px;
+    height:20px;
+    border:1.5px solid currentColor;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+
+  .svc-card.active .chk{
+    background:var(--primary);
+    color:#fff;
+    border-color:var(--primary);
+  }
+
+  .svc-card .chk svg{
+    width:14px;
+    height:14px;
+    opacity:0;
+    transition:opacity .2s;
+  }
+
+  .svc-card.active .chk svg{
+    opacity:1;
+  }
+
+  .links-section{
+    margin-bottom:28px;
+  }
+
+  .link-field{
+    margin-bottom:16px;
+  }
+
+  .link-field:last-child{
+    margin-bottom:0;
+  }
+
+  .link-field label{
+    margin-bottom:6px;
+  }
+
+  .confirm-row{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:16px;
+    background:rgba(0,145,125,0.06);
+    border-radius:12px;
+    margin:20px 0 0;
+  }
+
+  .confirm-row input[type="checkbox"]{
+    width:20px;
+    height:20px;
+    margin-top:2px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+
+  .confirm-row label{
+    margin:0;
+    cursor:pointer;
+    font-size:14px;
+    line-height:1.5;
+  }
+
+  .button-group{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:32px;
+    gap:12px;
+  }
+
+  button{
+    font-family:inherit;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 24px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:all .2s;
+  }
+
+  .btn-secondary{
+    background:rgba(255,255,255,0.5);
+    color:var(--ink);
+    border:1px solid var(--border);
+  }
+
+  .btn-secondary:hover{
+    background:#fff;
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+
+  .btn-secondary:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+
+  .btn-primary{
+    background:var(--primary);
+    color:#fff;
+    box-shadow:0 4px 12px rgba(0,145,125,0.2);
+  }
+
+  .btn-primary:hover{
+    background:var(--primary-dark);
+    box-shadow:0 6px 16px rgba(0,145,125,0.3);
+    transform:translateY(-1px);
+  }
+
+  .btn-primary:active{
+    transform:scale(0.98);
+  }
+
+  .btn-primary:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+  }
+
+  .spinner{
+    display:inline-block;
+    width:16px;
+    height:16px;
+    border:2px solid rgba(255,255,255,0.3);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+  }
+
+  @keyframes spin{
+    to{ transform:rotate(360deg); }
+  }
+
+  #successPanel{
+    display:none;
+    min-height:100vh;
+    padding:60px 24px;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #successPanel.show{
+    display:flex;
+  }
+
+  .success-card{
+    max-width:500px;
+    text-align:center;
+  }
+
+  .success-icon{
+    width:80px;
+    height:80px;
+    margin:0 auto 24px;
+    background:var(--primary-wash);
+    border:2px solid var(--primary);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+  }
+
+  .success-card h2{
+    font-family:"Syne",serif;
+    font-size:28px;
+    font-weight:700;
+    margin:0 0 12px;
+    color:var(--ink);
+  }
+
+  .success-card p{
+    font-size:15px;
+    color:var(--ink-soft);
+    margin:0 0 32px;
+    line-height:1.6;
+  }
+
+  .success-button{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    padding:12px 28px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .2s;
+    font-family:inherit;
+    box-shadow:0 4px 12px rgba(0,145,125,0.2);
+  }
+
+  .success-button:hover{
+    background:var(--primary-dark);
+    transform:translateY(-1px);
+    box-shadow:0 6px 16px rgba(0,145,125,0.3);
+  }
+
+  .success-button:active{
+    transform:scale(0.98);
+  }
+
+  .submit-error{
+    display:none;
+    padding:14px 16px;
+    background:#fee;
+    border:1px solid #fcc;
+    border-radius:10px;
+    color:#c33;
+    font-size:14px;
+    margin-bottom:20px;
+  }
+
+  .submit-error.show{
+    display:block;
+  }
+</style>
+</head>
+<body>
+
+<div id="landingPage">
+  <div class="grid-bg"></div>
+  <div class="landing-container">
+    <div class="program-badge">Student Founders Program</div>
+    <h1 class="landing-title">Build Your <span class="highlight">Future</span></h1>
+    <p class="landing-subtitle">Join Ground Zero and accelerate your startup journey with mentorship, resources, and a community of visionary builders.</p>
+    <div class="program-desc">
+      <strong>What you'll get:</strong> 1-on-1 mentorship from experienced founders, technical resources & tools, networking with peers, and potential funding opportunities. We support student founders at all stages—from idea to scale.
+    </div>
+    <button class="cta-button" onclick="startApplication()">
+      <span>Start Application</span>
+      <span class="arrow-icon">→</span>
+    </button>
+  </div>
+</div>
+
+<div id="formSection">
+  <div class="blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+  </div>
+
+  <div class="card">
+    <div class="progress-top">
+      <div class="eyebrow">Application Progress</div>
+      <span id="pctLabel">0%</span>
+    </div>
+    <div id="stepsTrack" class="steps-track"></div>
+    <div class="progress-bar">
+      <div id="barFill" class="progress-bar-fill"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="stepCaption">Step 1 of 6</span>
+    </div>
+
+    <form id="applicationForm" onsubmit="return false;">
+      <!-- STEP 0: Personal Info -->
+      <div class="step-panel active">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Tell us about yourself</h2>
+        
+        <div class="form-section">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" placeholder="John Doe">
+          <div class="error-message" id="err-name"></div>
+        </div>
+
+        <div class="row">
+          <div class="form-section">
+            <label for="age">Age *</label>
+            <input type="number" id="age" name="age" placeholder="21" min="16" max="50">
+            <div class="error-message" id="err-age"></div>
+          </div>
+          <div class="form-section">
+            <label for="institution">School / College *</label>
+            <input type="text" id="institution" name="institution" placeholder="SRMIST, IIT Madras, etc.">
+            <div class="error-message" id="err-institution"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-section">
+            <label for="gradeYear">Grade / Year *</label>
+            <input type="text" id="gradeYear" name="gradeYear" placeholder="2nd Year, 12th Grade">
+            <div class="error-message" id="err-gradeYear"></div>
+          </div>
+          <div class="form-section">
+            <label for="course">Course / Stream *</label>
+            <input type="text" id="course" name="course" placeholder="B.Tech CSE, B.Sc Physics">
+            <div class="error-message" id="err-course"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: About You -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Tell us your story</h2>
+        
+        <div class="form-section">
+          <label for="about">What drives you as a builder? *</label>
+          <textarea id="about" name="about" placeholder="Share your passion, background, and what motivates you to build..."></textarea>
+          <div class="error-message" id="err-about"></div>
+          <div class="hint">Write 50-200 words</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Startup Info -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">About your startup</h2>
+        
+        <div class="form-section">
+          <label for="startupName">Startup Name *</label>
+          <input type="text" id="startupName" name="startupName" placeholder="Your startup name">
+          <div class="error-message" id="err-startupName"></div>
+        </div>
+
+        <div class="form-section">
+          <label for="startupStage">Current Stage *</label>
+          <select id="startupStage" name="startupStage">
+            <option value="">Select a stage</option>
+            <option value="idea">Idea Stage</option>
+            <option value="mvp">MVP / Prototype</option>
+            <option value="launched">Launched (No Revenue)</option>
+            <option value="revenue">Early Revenue</option>
+            <option value="growth">Growth Stage</option>
+          </select>
+          <div class="error-message" id="err-startupStage"></div>
+        </div>
+
+        <div class="form-section">
+          <label for="idea">What problem are you solving? *</label>
+          <textarea id="idea" name="idea" placeholder="Describe your startup idea, the problem you're solving, and your vision..."></textarea>
+          <div class="error-message" id="err-idea"></div>
+          <div class="hint">Write 50-200 words</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Help Needed -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Where can we help? *</h2>
+        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Select all that apply</p>
+        <div id="helpGrid" class="svc-grid"></div>
+        <div class="error-message" id="err-helpNeeded" style="display:none;"></div>
+      </div>
+
+      <!-- STEP 4: Links & Portfolio -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Share your work</h2>
+        <p style="color:var(--ink-soft); margin:0 0 20px; font-size:14px;">Links to your website, profiles, and demo — all optional, add whatever you have</p>
+        
+        <div class="links-section">
+          <div class="link-field">
+            <label for="website">Website / Portfolio</label>
+            <input type="text" id="website" name="website" placeholder="https://yourwebsite.com">
+            <div class="error-message" id="err-website"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="linkedin">LinkedIn Profile</label>
+            <input type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+            <div class="error-message" id="err-linkedin"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="appLink">App / Product Link</label>
+            <input type="text" id="appLink" name="appLink" placeholder="https://app.example.com">
+            <div class="error-message" id="err-appLink"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="github">GitHub Profile</label>
+            <input type="text" id="github" name="github" placeholder="https://github.com/yourprofile">
+            <div class="error-message" id="err-github"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="figma">Figma / Design File</label>
+            <input type="text" id="figma" name="figma" placeholder="https://figma.com/file/...">
+            <div class="error-message" id="err-figma"></div>
+          </div>
+
+          <div class="link-field">
+            <label for="demoVideo">Demo Video</label>
+            <input type="text" id="demoVideo" name="demoVideo" placeholder="https://youtube.com/watch?v=... or Loom link">
+            <div class="error-message" id="err-demoVideo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Final -->
+      <div class="step-panel">
+        <h2 style="margin:0 0 24px; font-size:20px; font-weight:600;">Final thoughts</h2>
+        
+        <div class="form-section">
+          <label for="whySelect">Why should Ground Zero invest in you? *</label>
+          <textarea id="whySelect" name="whySelect" placeholder="Tell us what makes you and your startup unique and why you'd be a great fit for Ground Zero..."></textarea>
+          <div class="error-message" id="err-whySelect"></div>
+          <div class="hint">Write 50-150 words</div>
+        </div>
+
+        <div class="confirm-row">
+          <input type="checkbox" id="confirm" name="confirm">
+          <label for="confirm">I confirm that all information provided is accurate and truthful. *</label>
+        </div>
+        <div class="error-message" id="err-confirm" style="margin-top:8px;"></div>
+
+        <div id="submitErr" class="submit-error">
+          Something went wrong. Please check your connection and try again.
+        </div>
+      </div>
+
+      <!-- Step Flow Actions -->
+      <div id="stepFlow" class="button-group">
+        <button type="button" id="backBtn" class="btn btn-secondary">← Back</button>
+        <button type="button" id="nextBtn" class="btn btn-primary">Next →</button>
+        <button type="submit" id="submitBtn" class="btn btn-primary" style="display:none;">
+          <span id="submitLabel">Submit Application</span>
+          <span id="submitArrow">→</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success Message -->
+  <div id="successPanel">
+    <div class="success-card">
+      <div class="success-icon">✓</div>
+      <h2>Application Submitted!</h2>
+      <p>Thank you for applying to Ground Zero. We've received your application and will review it shortly. Keep an eye on your email for updates!</p>
+      <button class="success-button" onclick="window.location.href='https://clysto.net'">
+        ← Back to Clysto.net
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = "gz_application_draft";
+  const TOTAL_STEPS = 6;
+  let step = 0;
+  let isSubmitted = false;
+
+  // ===== SUPABASE CLIENT =====
+  const supabaseClient = window.SUPABASE_CONFIG
+    ? supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey)
+    : null;
+
+  const state = {
+    name:"", age:"", institution:"", gradeYear:"", course:"", about:"",
+    startupName:"", startupStage:"", idea:"",
+    helpNeeded:[], website:"", appLink:"", github:"", figma:"", demoVideo:"", linkedin:"",
+    whySelect:"", confirmed:false
+  };
+
+  const helpOptions = [
+    "Product Development", "Marketing", "Technical Setup",
+    "Fundraising", "Business Strategy", "Pitching Skills"
+  ];
+
+  function waitForSupabase() {
+    return new Promise((resolve) => {
+      if (typeof supabaseClient !== "undefined" && supabaseClient) {
+        resolve();
+      } else {
+        const checkInterval = setInterval(() => {
+          if (typeof supabaseClient !== "undefined" && supabaseClient) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 100);
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          console.warn("Supabase config took longer than expected to load");
+          resolve();
+        }, 3000);
+      }
+    });
+  }
+
+  function renderProgress(){
+    const trackEl = document.getElementById("stepsTrack");
+    trackEl.innerHTML = "";
+    for(let i = 0; i < TOTAL_STEPS; i++){
+      const dot = document.createElement("div");
+      dot.className = "step-dot";
+      if(i < step) dot.classList.add("done");
+      if(i === step) dot.classList.add("current");
+      dot.textContent = i + 1;
+      trackEl.appendChild(dot);
+      if(i < TOTAL_STEPS - 1){
+        const line = document.createElement("div");
+        line.className = "step-line";
+        if(i < step) line.classList.add("done");
+        trackEl.appendChild(line);
+      }
+    }
+    const pct = Math.round(((step + 1) / TOTAL_STEPS) * 100);
+    document.getElementById("pctLabel").textContent = pct + "%";
+    document.getElementById("barFill").style.width = pct + "%";
+    document.getElementById("stepCaption").textContent = `Step ${step + 1} of ${TOTAL_STEPS}`;
+  }
+
+  function renderStepPanels(){
+    document.querySelectorAll(".step-panel").forEach((p, i)=>{
+      p.classList.toggle("active", i === step);
+    });
+    document.getElementById("backBtn").disabled = step === 0;
+    document.getElementById("nextBtn").style.display = step === TOTAL_STEPS - 1 ? "none" : "inline-flex";
+    document.getElementById("submitBtn").style.display = step === TOTAL_STEPS - 1 ? "inline-flex" : "none";
+  }
+
+  function buildHelpGrid(){
+    const grid = document.getElementById("helpGrid");
+    grid.innerHTML = "";
+    helpOptions.forEach(opt=>{
+      const card = document.createElement("button");
+      card.className = "svc-card";
+      card.type = "button";
+      card.innerHTML = `<div class="chk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></div><span>${opt}</span>`;
+      card.addEventListener("click", (e)=>{
+        e.preventDefault();
+        card.classList.toggle("active");
+        if(card.classList.contains("active")){
+          if(!state.helpNeeded.includes(opt)) state.helpNeeded.push(opt);
+        }else{
+          state.helpNeeded = state.helpNeeded.filter(x => x !== opt);
+        }
+        saveDraft();
+      });
+      if(state.helpNeeded.includes(opt)) card.classList.add("active");
+      grid.appendChild(card);
+    });
+  }
+
+  function clearErrors(){
+    document.querySelectorAll(".error-message").forEach(e => e.classList.remove("show"));
+    document.querySelectorAll("input, select, textarea").forEach(e => e.classList.remove("error"));
+  }
+
+  function setError(key, msg){
+    const el = document.getElementById("err-" + key);
+    if(el){
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+    const input = document.getElementById(key);
+    if(input) input.classList.add("error");
+  }
+
+  function validateStep(s){
+    clearErrors();
+    let ok = true;
+    if(s === 0){
+      if(!state.name.trim()){ setError("name","Full name is required."); ok = false; }
+      if(!state.age){ setError("age","Age is required."); ok = false; }
+      if(!state.institution.trim()){ setError("institution","School / college name is required."); ok = false; }
+      if(!state.gradeYear.trim()){ setError("gradeYear","Grade / year is required."); ok = false; }
+      if(!state.course.trim()){ setError("course","Course is required."); ok = false; }
+    }
+    if(s === 1){
+      if(!state.about.trim()){ setError("about","This field is required."); ok = false; }
+    }
+    if(s === 2){
+      if(!state.startupName.trim()){ setError("startupName","Startup name is required."); ok = false; }
+      if(!state.startupStage){ setError("startupStage","Please select a stage."); ok = false; }
+      if(!state.idea.trim()){ setError("idea","Please describe your startup."); ok = false; }
+    }
+    if(s === 3){
+      if(state.helpNeeded.length === 0){
+        const el = document.getElementById("err-helpNeeded");
+        el.textContent = "Please select at least one area where we can help.";
+        el.style.display = "block";
+        ok = false;
+      }
+    }
+    // Step 5 of 6 (links & portfolio) is intentionally optional — no validation here.
+    if(s === 5){
+      if(!state.whySelect.trim()){ setError("whySelect","This field is required."); ok = false; }
+      if(!state.confirmed){
+        setError("confirm","Please confirm your information is accurate before submitting.");
+        ok = false;
+      }
+    }
+    return ok;
+  }
+
+  function saveDraft(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, step })); }catch(e){}
+  }
+
+  function loadDraft(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const parsed = JSON.parse(raw);
+      if(parsed.state) Object.assign(state, parsed.state);
+      if(typeof parsed.step === "number") step = parsed.step;
+    }catch(e){}
+  }
+
+  const TEXT_FIELDS = ["name","age","institution","gradeYear","course","about",
+    "startupName","idea","website","appLink","github","figma","demoVideo","linkedin","whySelect"];
+
+  function bindTextFields(){
+    TEXT_FIELDS.forEach(key=>{
+      const input = document.getElementById(key);
+      if(!input) return;
+      input.value = state[key] || "";
+      input.addEventListener("input", ()=>{
+        state[key] = input.value;
+        saveDraft();
+      });
+    });
+    const stageSel = document.getElementById("startupStage");
+    stageSel.value = state.startupStage || "";
+    stageSel.addEventListener("change", ()=>{
+      state.startupStage = stageSel.value;
+      saveDraft();
+    });
+    const confirm = document.getElementById("confirm");
+    confirm.checked = state.confirmed;
+    confirm.addEventListener("change", ()=>{
+      state.confirmed = confirm.checked;
+      saveDraft();
+    });
+  }
+
+  function goToStep(target){
+    step = Math.max(0, Math.min(target, TOTAL_STEPS - 1));
+    renderProgress();
+    renderStepPanels();
+    document.getElementById("formSection").scrollIntoView({behavior:"smooth", block:"start"});
+    saveDraft();
+  }
+
+  function startApplication(){
+    document.getElementById("landingPage").style.display = "none";
+    document.getElementById("formSection").classList.add("show");
+  }
+
+  document.getElementById("nextBtn").addEventListener("click", ()=>{
+    if(!validateStep(step)) return;
+    goToStep(step + 1);
+  });
+
+  document.getElementById("backBtn").addEventListener("click", ()=>{
+    goToStep(step - 1);
+  });
+
+  document.getElementById("applicationForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    
+    for(let i = 0; i < TOTAL_STEPS; i++){
+      if(!validateStep(i)){ goToStep(i); return; }
+    }
+
+    const submitBtn = document.getElementById("submitBtn");
+    const submitLabel = document.getElementById("submitLabel");
+    const submitArrow = document.getElementById("submitArrow");
+    const submitErr = document.getElementById("submitErr");
+
+    submitBtn.disabled = true;
+    submitArrow.style.display = "none";
+    submitLabel.textContent = "Submitting…";
+    const spinner = document.createElement("span");
+    spinner.className = "spinner";
+    submitBtn.insertBefore(spinner, submitLabel);
+    submitErr.classList.remove("show");
+
+    await waitForSupabase();
+
+    const payload = {
+      name: state.name,
+      age: state.age,
+      institution: state.institution,
+      grade_year: state.gradeYear || null,
+      course: state.course || null,
+      about: state.about || null,
+      startup_name: state.startupName || null,
+      startup_stage: state.startupStage || null,
+      idea: state.idea || null,
+      help_needed: state.helpNeeded.length > 0 ? state.helpNeeded.join(", ") : null,
+      website: state.website || null,
+      app_link: state.appLink || null,
+      github: state.github || null,
+      figma: state.figma || null,
+      demo_video: state.demoVideo || null,
+      linkedin: state.linkedin || null,
+      why_select: state.whySelect || null
+    };
+
+    try{
+      if(typeof supabaseClient === "undefined" || !supabaseClient) {
+        throw new Error("Supabase is not configured. Please check that supabase-config.js is loaded correctly.");
+      }
+      
+      const { error } = await supabaseClient.from("student_founders_applications").insert([payload]);
+      if(error) throw error;
+
+      isSubmitted = true;
+      document.getElementById("formSection").classList.remove("show");
+      document.getElementById("successPanel").classList.add("show");
+      localStorage.removeItem(STORAGE_KEY);
+    }catch(err){
+      console.error("[application submit]", err);
+      submitErr.classList.add("show");
+      submitBtn.disabled = false;
+      spinner.remove();
+      submitArrow.style.display = "inline";
+      submitLabel.textContent = "Submit Application";
+    }
+  });
+
+  loadDraft();
+  buildHelpGrid();
+  bindTextFields();
+  renderProgress();
+  renderStepPanels();
+</script>
+</body>
+</html>
